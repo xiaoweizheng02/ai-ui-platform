@@ -38,9 +38,6 @@
         <a href="/pay" class="px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary/90 transition-colors">
           充值
         </a>
-        <button id="logout-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
-          退出
-        </button>
       </div>
     </div>
   </nav>
@@ -96,14 +93,12 @@
 
   <script>
     // 全局变量
-    let token = localStorage.getItem('token');
     let currentHtml = '';
 
     // DOM 元素
     const elements = {
       nickname: document.getElementById('nickname'),
       remain: document.getElementById('remain'),
-      logoutBtn: document.getElementById('logout-btn'),
       loading: document.getElementById('loading'),
       emptyState: document.getElementById('empty-state'),
       historyList: document.getElementById('history-list'),
@@ -116,51 +111,29 @@
 
     // 初始化
     function init() {
-      checkLogin();
-      bindEvents();
-    }
-
-    // 检查登录状态
-    function checkLogin() {
-      if (!token) {
-        window.location.href = '/login';
-        return;
-      }
       getUserInfo();
       getHistory();
+      bindEvents();
     }
 
     // 获取用户信息
     function getUserInfo() {
-      fetch('/api/user/info', {
-        headers: {
-          'token': token
-        }
-      })
+      fetch('/api/user/info')
       .then(res => res.json())
       .then(data => {
         if (data.code === 0) {
           elements.nickname.textContent = data.data.nickname;
           elements.remain.textContent = data.data.remain;
-        } else {
-          localStorage.removeItem('token');
-          window.location.href = '/login';
         }
       })
       .catch(err => {
         console.error('获取用户信息失败:', err);
-        localStorage.removeItem('token');
-        window.location.href = '/login';
       });
     }
 
     // 获取历史记录
     function getHistory() {
-      fetch('/api/user/history', {
-        headers: {
-          'token': token
-        }
-      })
+      fetch('/api/user/history')
       .then(res => res.json())
       .then(data => {
         elements.loading.classList.add('hidden');
@@ -220,12 +193,6 @@
 
     // 绑定事件
     function bindEvents() {
-      // 退出登录
-      elements.logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('token');
-        window.location.href = '/login';
-      });
-
       // 关闭预览模态框
       elements.closePreview.addEventListener('click', () => {
         elements.previewModal.classList.add('hidden');

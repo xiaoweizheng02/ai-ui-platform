@@ -38,83 +38,70 @@
         <a href="/history" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
           历史记录
         </a>
-        <button id="logout-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
-          退出
-        </button>
       </div>
     </div>
   </nav>
 
   <!-- 主内容区 -->
   <main class="container mx-auto px-4 py-8">
-    <div class="max-w-2xl mx-auto">
-      <h2 class="text-2xl font-bold mb-6 text-center">充值次数</h2>
-      
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white rounded-lg shadow-md p-6 border-2 border-gray-200 hover:border-primary transition-colors cursor-pointer plan-card" data-times="10">
-          <div class="text-center">
-            <h3 class="text-lg font-semibold mb-2">基础套餐</h3>
-            <div class="text-2xl font-bold text-primary mb-4">¥99</div>
-            <p class="text-gray-600 mb-4">10次生成机会</p>
-            <button class="w-full py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">
-              选择
-            </button>
+    <h2 class="text-2xl font-bold mb-6">充值</h2>
+    
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold mb-4">选择充值套餐</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="border rounded-lg p-4 hover:border-primary cursor-pointer transition-colors" data-times="10">
+            <div class="text-center">
+              <h4 class="font-semibold">基础套餐</h4>
+              <p class="text-2xl font-bold text-primary mt-2">10次</p>
+              <p class="text-gray-500 mt-1">适合个人用户</p>
+            </div>
           </div>
-        </div>
-        <div class="bg-white rounded-lg shadow-md p-6 border-2 border-primary transition-colors cursor-pointer plan-card" data-times="30">
-          <div class="text-center">
-            <div class="inline-block bg-primary text-white text-xs px-2 py-1 rounded-full mb-2">推荐</div>
-            <h3 class="text-lg font-semibold mb-2">高级套餐</h3>
-            <div class="text-2xl font-bold text-primary mb-4">¥249</div>
-            <p class="text-gray-600 mb-4">30次生成机会</p>
-            <button class="w-full py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">
-              选择
-            </button>
+          <div class="border rounded-lg p-4 hover:border-primary cursor-pointer transition-colors" data-times="50">
+            <div class="text-center">
+              <h4 class="font-semibold">专业套餐</h4>
+              <p class="text-2xl font-bold text-primary mt-2">50次</p>
+              <p class="text-gray-500 mt-1">适合团队使用</p>
+            </div>
           </div>
-        </div>
-        <div class="bg-white rounded-lg shadow-md p-6 border-2 border-gray-200 hover:border-primary transition-colors cursor-pointer plan-card" data-times="100">
-          <div class="text-center">
-            <h3 class="text-lg font-semibold mb-2">专业套餐</h3>
-            <div class="text-2xl font-bold text-primary mb-4">¥699</div>
-            <p class="text-gray-600 mb-4">100次生成机会</p>
-            <button class="w-full py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">
-              选择
-            </button>
+          <div class="border rounded-lg p-4 hover:border-primary cursor-pointer transition-colors" data-times="200">
+            <div class="text-center">
+              <h4 class="font-semibold">企业套餐</h4>
+              <p class="text-2xl font-bold text-primary mt-2">200次</p>
+              <p class="text-gray-500 mt-1">适合企业级应用</p>
+            </div>
           </div>
         </div>
       </div>
       
-      <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="mb-6">
         <h3 class="text-lg font-semibold mb-4">支付方式</h3>
-        <div class="space-y-4">
-          <div class="flex items-center space-x-3">
-            <input type="radio" id="wechat" name="payment" class="h-4 w-4 text-primary focus:ring-primary border-gray-300" checked>
-            <label for="wechat" class="flex items-center space-x-2 cursor-pointer">
-              <i class="fa fa-weixin text-green-500 text-xl"></i>
-              <span>微信支付</span>
+        <div class="flex space-x-4">
+          <div class="flex items-center">
+            <input type="radio" id="wechat" name="payment" value="wechat" class="mr-2">
+            <label for="wechat" class="flex items-center">
+              <i class="fa fa-weixin text-green-500 text-2xl mr-2"></i>
+              微信支付
             </label>
           </div>
-          <div class="flex items-center space-x-3">
-            <input type="radio" id="alipay" name="payment" class="h-4 w-4 text-primary focus:ring-primary border-gray-300">
-            <label for="alipay" class="flex items-center space-x-2 cursor-pointer">
-              <i class="fa fa-credit-card text-blue-500 text-xl"></i>
-              <span>支付宝</span>
-            </label>
-          </div>
-          <div class="flex items-center space-x-3">
-            <input type="radio" id="card" name="payment" class="h-4 w-4 text-primary focus:ring-primary border-gray-300">
-            <label for="card" class="flex items-center space-x-2 cursor-pointer">
-              <i class="fa fa-credit-card-alt text-purple-500 text-xl"></i>
-              <span>银行卡</span>
+          <div class="flex items-center">
+            <input type="radio" id="alipay" name="payment" value="alipay" class="mr-2">
+            <label for="alipay" class="flex items-center">
+              <i class="fa fa-credit-card text-blue-500 text-2xl mr-2"></i>
+              支付宝
             </label>
           </div>
         </div>
-        
-        <div class="mt-8">
-          <button id="pay-btn" class="w-full py-3 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">
-            立即支付
-          </button>
-        </div>
+      </div>
+      
+      <div class="text-center">
+        <button id="pay-btn" class="px-8 py-3 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors text-lg font-medium">
+          立即支付
+        </button>
+        <p class="text-gray-500 mt-4">
+          <i class="fa fa-info-circle mr-1"></i>
+          测试环境，点击支付即可完成充值
+        </p>
       </div>
     </div>
   </main>
@@ -128,103 +115,74 @@
 
   <script>
     // 全局变量
-    let token = localStorage.getItem('token');
-    let selectedTimes = 30; // 默认选择高级套餐
+    let selectedTimes = 10;
 
     // DOM 元素
     const elements = {
       nickname: document.getElementById('nickname'),
       remain: document.getElementById('remain'),
-      logoutBtn: document.getElementById('logout-btn'),
-      planCards: document.querySelectorAll('.plan-card'),
       payBtn: document.getElementById('pay-btn')
     };
 
     // 初始化
     function init() {
-      checkLogin();
-      bindEvents();
-    }
-
-    // 检查登录状态
-    function checkLogin() {
-      if (!token) {
-        window.location.href = '/login';
-        return;
-      }
       getUserInfo();
+      bindEvents();
     }
 
     // 获取用户信息
     function getUserInfo() {
-      fetch('/api/user/info', {
-        headers: {
-          'token': token
-        }
-      })
+      fetch('/api/user/info')
       .then(res => res.json())
       .then(data => {
         if (data.code === 0) {
           elements.nickname.textContent = data.data.nickname;
           elements.remain.textContent = data.data.remain;
-        } else {
-          localStorage.removeItem('token');
-          window.location.href = '/login';
         }
       })
       .catch(err => {
         console.error('获取用户信息失败:', err);
-        localStorage.removeItem('token');
-        window.location.href = '/login';
       });
     }
 
     // 绑定事件
     function bindEvents() {
-      // 退出登录
-      elements.logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('token');
-        window.location.href = '/login';
-      });
-
       // 选择套餐
-      elements.planCards.forEach(card => {
-        card.addEventListener('click', () => {
-          // 移除所有卡片的选中状态
-          elements.planCards.forEach(c => {
-            c.classList.remove('border-primary');
-            c.classList.add('border-gray-200');
+      document.querySelectorAll('[data-times]').forEach(item => {
+        item.addEventListener('click', () => {
+          // 移除所有选中状态
+          document.querySelectorAll('[data-times]').forEach(i => {
+            i.classList.remove('border-primary', 'bg-primary/5');
           });
-          // 添加当前卡片的选中状态
-          card.classList.remove('border-gray-200');
-          card.classList.add('border-primary');
-          // 更新选中的次数
-          selectedTimes = parseInt(card.dataset.times);
+          // 添加选中状态
+          item.classList.add('border-primary', 'bg-primary/5');
+          // 设置选中的次数
+          selectedTimes = parseInt(item.dataset.times);
         });
       });
 
-      // 支付
+      // 支付按钮
       elements.payBtn.addEventListener('click', () => {
         fetch('/api/pay/wxpay', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'token': token
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({ times: selectedTimes })
         })
         .then(res => res.json())
         .then(data => {
           if (data.code === 0) {
-            alert('支付成功');
+            alert('充值成功！');
+            // 更新剩余次数
             elements.remain.textContent = data.remain;
           } else {
             alert(data.msg);
           }
         })
         .catch(err => {
-          console.error('支付失败:', err);
-          alert('支付失败，请重试');
+          console.error('充值失败:', err);
+          alert('充值失败，请重试');
         });
       });
     }

@@ -8,45 +8,14 @@ const app = express();
 app.use(express.json());
 app.use(express.static('public'));
 
-const users = {
-  "13800138000": { code: "1234", remain: 5, nickname: "测试用户", isAdmin: false, history: [] },
-  "admin": { code: "1234", remain: 9999, nickname: "管理员", isAdmin: true, history: [] }
-};
-
-const sessions = {};
-
-function makeToken() {
-  return Math.random().toString(36).slice(2) + Date.now();
-}
-
-app.post('/api/login/sms', (req, res) => {
-  const { phone, code } = req.body;
-  const user = users[phone];
-  if (!user || user.code !== code) return res.json({ code: 1, msg: "验证码错误" });
-  const token = makeToken();
-  sessions[token] = phone;
-  res.json({ code: 0, token, remain: user.remain });
-});
-
-function checkAuth(req, res, next) {
-  const token = req.headers.token;
-  if (!token || !sessions[token]) return res.json({ code: 401, msg: "请登录" });
-  req.account = sessions[token];
-  next();
-}
-
-app.get('/api/user/info', checkAuth, (req, res) => {
-  const u = users[req.account];
-  res.json({ code: 0, data: { nickname: u.nickname, remain: u.remain } });
-});
+// 模拟用户数据，无需登录
+const defaultUser = { nickname: "访客", remain: 9999, history: [] };
 
 // ==============================
 // 豆包 API 生成 UI
 // ==============================
-app.post('/api/generate/ui', checkAuth, async (req, res) => {
+app.post('/api/generate/ui', async (req, res) => {
   const { prompt } = req.body;
-  const u = users[req.account];
-  if (u.remain <= 0) return res.json({ code: 1, msg: "次数不足，请充值" });
 
   try {
     const resp = await axios({
@@ -76,27 +45,29 @@ app.post('/api/generate/ui', checkAuth, async (req, res) => {
     let html = resp.data.choices[0].message.content || "";
     html = html.replace(/```html|```/g, "").trim();
 
-    u.history.push({ prompt, html, time: new Date().toLocaleString() });
-    u.remain -= 1;
+    defaultUser.history.push({ prompt, html, time: new Date().toLocaleString() });
 
-    res.json({ code: 0, data: { html, remain: u.remain } });
+    res.json({ code: 0, data: { html, remain: defaultUser.remain } });
   } catch (e) {
     res.json({ code: 1, msg: "生成失败：" + e.message });
   }
 });
 
-app.get('/api/user/history', checkAuth, (req, res) => {
-  res.json({ code: 0, data: users[req.account].history });
+app.get('/api/user/info', (req, res) => {
+  res.json({ code: 0, data: { nickname: defaultUser.nickname, remain: defaultUser.remain } });
 });
 
-app.post('/api/pay/wxpay', checkAuth, (req, res) => {
+app.get('/api/user/history', (req, res) => {
+  res.json({ code: 0, data: defaultUser.history });
+});
+
+app.post('/api/pay/wxpay', (req, res) => {
   const { times } = req.body;
-  const u = users[req.account];
-  u.remain += Number(times);
-  res.json({ code: 0, msg: "支付成功", remain: u.remain });
+  defaultUser.remain += Number(times);
+  res.json({ code: 0, msg: "支付成功", remain: defaultUser.remain });
 });
 
-app.get('/api/export/html', checkAuth, (req, res) => {
+app.get('/api/export/html', (req, res) => {
   const html = req.query.html || "";
   const zip = archiver('zip');
   res.setHeader('Content-Type', 'application/zip');
@@ -106,9 +77,8 @@ app.get('/api/export/html', checkAuth, (req, res) => {
   zip.finalize();
 });
 
-app.get('/api/admin/users', checkAuth, (req, res) => {
-  if (!users[req.account].isAdmin) return res.json({ code: 403, msg: "无权限" });
-  res.json({ code: 0, data: users });
+app.get('/api/admin/users', (req, res) => {
+  res.json({ code: 0, data: { "guest": defaultUser } });
 });
 
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public/index.html')));
