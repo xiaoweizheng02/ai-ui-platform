@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理后台 - AI UI 设计生成平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4f46e5',
+            secondary: '#7c3aed',
+            accent: '#06b6d4',
+          },
+        },
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 font-sans">
+  <!-- 导航栏 -->
+  <nav class="bg-white shadow-md">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <i class="fa fa-paint-brush text-primary text-2xl"></i>
+        <h1 class="text-xl font-bold text-gray-800">AI UI 设计生成平台</h1>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span id="user-info" class="text-sm text-gray-600">
+          <span id="nickname"></span> | 剩余次数: <span id="remain"></span>
+        </span>
+        <a href="/" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
+          首页
+        </a>
+        <button id="logout-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
+          退出
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主内容区 -->
+  <main class="container mx-auto px-4 py-8">
+    <h2 class="text-2xl font-bold mb-6">管理后台</h2>
+    
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div id="loading" class="py-12 text-center">
+        <i class="fa fa-spinner fa-spin text-2xl text-gray-400"></i>
+        <p class="mt-2 text-gray-500">加载中...</p>
+      </div>
+      
+      <div id="no-permission" class="py-12 text-center hidden">
+        <i class="fa fa-lock text-4xl text-gray-400 mb-4"></i>
+        <p class="text-gray-500">无权限访问管理后台</p>
+      </div>
+      
+      <div id="admin-content" class="hidden">
+        <h3 class="text-lg font-semibold mb-4">用户管理</h3>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  用户名
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  昵称
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  剩余次数
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  角色
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  操作
+                </th>
+              </tr>
+            </thead>
+            <tbody id="user-table" class="bg-white divide-y divide-gray-200">
+              <!-- 用户数据将通过JavaScript动态生成 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 底部信息 -->
+  <footer class="bg-white border-t border-gray-200 mt-8 py-4">
+    <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
+      <p>AI UI 设计生成平台 - 基于豆包AI的智能设计工具</p>
+    </div>
+  </footer>
+
+  <script>
+    // 全局变量
+    let token = localStorage.getItem('token');
+
+    // DOM 元素
+    const elements = {
+      nickname: document.getElementById('nickname'),
+      remain: document.getElementById('remain'),
+      logoutBtn: document.getElementById('logout-btn'),
+      loading: document.getElementById('loading'),
+      noPermission: document.getElementById('no-permission'),
+      adminContent: document.getElementById('admin-content'),
+      userTable: document.getElementById('user-table')
+    };
+
+    // 初始化
+    function init() {
+      checkLogin();
+      bindEvents();
+    }
+
+    // 检查登录状态
+    function checkLogin() {
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
+      getUserInfo();
+      getUsers();
+    }
+
+    // 获取用户信息
+    function getUserInfo() {
+      fetch('/api/user/info', {
+        headers: {
+          'token': token
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.code === 0) {
+          elements.nickname.textContent = data.data.nickname;
+          elements.remain.textContent = data.data.remain;
+        } else {
+          localStorage.removeItem('token');
+          window.location.href = '/login';
+        }
+      })
+      .catch(err => {
+        console.error('获取用户信息失败:', err);
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      });
+    }
+
+    // 获取用户列表
+    function getUsers() {
+      fetch('/api/admin/users', {
+        headers: {
+          'token': token
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        elements.loading.classList.add('hidden');
+        if (data.code === 0) {
+          elements.adminContent.classList.remove('hidden');
+          renderUsers(data.data);
+        } else if (data.code === 403) {
+          elements.noPermission.classList.remove('hidden');
+        } else {
+          alert(data.msg);
+          elements.noPermission.classList.remove('hidden');
+        }
+      })
+      .catch(err => {
+        console.error('获取用户列表失败:', err);
+        elements.loading.classList.add('hidden');
+        elements.noPermission.classList.remove('hidden');
+      });
+    }
+
+    // 渲染用户列表
+    function renderUsers(users) {
+      elements.userTable.innerHTML = '';
+      Object.entries(users).forEach(([username, user]) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm font-medium text-gray-900">${username}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-500">${user.nickname}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-500">${user.remain}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.isAdmin ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+              ${user.isAdmin ? '管理员' : '普通用户'}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <button class="text-primary hover:text-primary/80 mr-3 edit-btn" data-username="${username}">
+              编辑
+            </button>
+            <button class="text-red-600 hover:text-red-900 delete-btn" data-username="${username}">
+              删除
+            </button>
+          </td>
+        `;
+        elements.userTable.appendChild(row);
+      });
+
+      // 绑定编辑和删除按钮事件
+      document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const username = btn.dataset.username;
+          alert(`编辑用户: ${username}`);
+        });
+      });
+
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const username = btn.dataset.username;
+          if (confirm(`确定要删除用户 ${username} 吗？`)) {
+            alert(`删除用户: ${username}`);
+          }
+        });
+      });
+    }
+
+    // 绑定事件
+    function bindEvents() {
+      // 退出登录
+      elements.logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      });
+    }
+
+    // 初始化
+    init();
+  </script>
+</body>
+</html>
