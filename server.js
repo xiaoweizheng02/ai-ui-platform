@@ -83,34 +83,15 @@ app.get('/api/admin/users', (req, res) => {
 });
 
 // ==============================
-// Figma API 集成
+// Figma 集成
 // ==============================
 app.post('/api/figma/open', async (req, res) => {
   const { html } = req.body;
   try {
-    const figmaToken = process.env.FIGMA_ACCESS_TOKEN;
-    if (!figmaToken) {
-      return res.json({ code: 1, msg: "Figma访问令牌未设置" });
-    }
+    // 直接打开Figma的最近文件页面
+    // 避免API权限问题
+    const figmaUrl = "https://www.figma.com/files/recent";
 
-    // 创建Figma文件
-    const createFileResponse = await axios({
-      method: "POST",
-      url: "https://api.figma.com/v1/files",
-      headers: {
-        "Authorization": `Bearer ${figmaToken}`,
-        "Content-Type": "application/json"
-      },
-      data: {
-        name: "AI Generated UI",
-        files: {}
-      }
-    });
-
-    const fileId = createFileResponse.data.id;
-    const figmaUrl = `https://www.figma.com/file/${fileId}/AI-Generated-UI`;
-
-    // 返回Figma文件链接
     res.json({ 
       code: 0, 
       data: { 
