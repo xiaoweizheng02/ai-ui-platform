@@ -18,23 +18,20 @@ app.post('/api/generate/ui', async (req, res) => {
   const { prompt } = req.body;
 
   try {
-    const apiKey = process.env.DOUBAO_API_KEY || "ep-m-20260327143747-qlhcp";
+    const apiKey = process.env.DOUBAO_API_KEY || "953c9670-b77b-4650-8aff-6d0ce472241b"";
     const resp = await axios({
       method: "POST",
-      url: "https://ark.cn-beijing.aliyuncs.com/api/v1/endpoints/yi-34b-chat-infer/infer",
+      url: "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json"
       },
       data: {
-        model: "yi-34b-chat",
+        model: "ep-m-20260327143747-qlhcp", // 替换为您的豆包模型端点ID
         messages: [
           {
             role: "system",
-            content: `你是顶级UI工程师。
-只返回完整可直接运行的HTML+TailwindCSS代码。
-不要解释、不要markdown、不要代码块、不要多余内容。
-界面要求：美观、现代、响应式、商用级、配色高级、布局干净、带卡片、导航、表格、按钮、表单、弹窗。`
+            content: "你是顶级UI工程师。只返回完整可直接运行的HTML+TailwindCSS代码。不要解释、不要markdown、不要代码块、不要多余内容。界面要求：美观、现代、响应式、商用级、配色高级、布局干净、带卡片、导航、表格、按钮、表单、弹窗。"
           },
           { role: "user", content: prompt }
         ],
