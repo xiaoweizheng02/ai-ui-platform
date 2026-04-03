@@ -148,6 +148,12 @@
             保存代码
           </button>
           <button 
+            id="copy-html" 
+            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors hidden"
+          >
+            <i class="fa fa-copy mr-2"></i> 复制HTML
+          </button>
+          <button 
             id="export-png" 
             class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors hidden"
           >
@@ -207,6 +213,7 @@
       codeContent: document.getElementById('code-content'),
       codeEditor: document.getElementById('code-editor'),
       saveCode: document.getElementById('save-code'),
+      copyHtml: document.getElementById('copy-html'),
       exportPng: document.getElementById('export-png'),
       exportHtml: document.getElementById('export-html'),
       openFigma: document.getElementById('open-figma')
@@ -304,6 +311,7 @@
             elements.previewContent.classList.remove('hidden');
             elements.codeContent.classList.add('hidden');
             elements.saveCode.classList.remove('hidden');
+            elements.copyHtml.classList.remove('hidden');
             elements.exportPng.classList.remove('hidden');
             elements.exportHtml.classList.remove('hidden');
             elements.openFigma.classList.remove('hidden');
@@ -357,6 +365,18 @@
         window.location.href = `/api/export/html?html=${encodeURIComponent(currentHtml)}`;
       });
 
+      // 复制HTML
+      elements.copyHtml.addEventListener('click', () => {
+        navigator.clipboard.writeText(currentHtml)
+          .then(() => {
+            alert('HTML代码已复制到剪贴板');
+          })
+          .catch(err => {
+            console.error('复制失败:', err);
+            alert('复制失败，请手动复制');
+          });
+      });
+
       // 在Figma中打开
       elements.openFigma.addEventListener('click', () => {
         if (!currentHtml) {
@@ -364,33 +384,21 @@
           return;
         }
         
-        elements.openFigma.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> 打开中...';
-        elements.openFigma.disabled = true;
-        
-        fetch('/api/figma/open', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ html: currentHtml })
-        })
-        .then(res => res.json())
-        .then(data => {
-          elements.openFigma.innerHTML = '在Figma中打开';
-          elements.openFigma.disabled = false;
-          
-          if (data.code === 0) {
-            window.open(data.data.figmaUrl, '_blank');
-          } else {
-            alert(data.msg);
-          }
-        })
-        .catch(err => {
-          console.error('打开Figma失败:', err);
-          elements.openFigma.innerHTML = '在Figma中打开';
-          elements.openFigma.disabled = false;
-          alert('打开Figma失败，请重试');
-        });
+        // 复制HTML代码到剪贴板
+        navigator.clipboard.writeText(currentHtml)
+          .then(() => {
+            // 打开Figma
+            window.open('https://www.figma.com/files/recent', '_blank');
+            // 显示提示
+            alert('HTML代码已复制到剪贴板，请在Figma中创建新文件并粘贴代码');
+          })
+          .catch(err => {
+            console.error('复制失败:', err);
+            // 打开Figma
+            window.open('https://www.figma.com/files/recent', '_blank');
+            // 显示提示
+            alert('请手动复制HTML代码并在Figma中创建新文件');
+          });
       });
     }
 
