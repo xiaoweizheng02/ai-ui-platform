@@ -93,15 +93,30 @@ app.post('/api/figma/open', async (req, res) => {
       return res.json({ code: 1, msg: "Figma访问令牌未设置" });
     }
 
-    // 模拟Figma API调用
-    setTimeout(() => {
-      res.json({ 
-        code: 0, 
-        data: { 
-          figmaUrl: "https://www.figma.com/files/recent" 
-        } 
-      });
-    }, 1000);
+    // 创建Figma文件
+    const createFileResponse = await axios({
+      method: "POST",
+      url: "https://api.figma.com/v1/files",
+      headers: {
+        "Authorization": `Bearer ${figmaToken}`,
+        "Content-Type": "application/json"
+      },
+      data: {
+        name: "AI Generated UI",
+        files: {}
+      }
+    });
+
+    const fileId = createFileResponse.data.id;
+    const figmaUrl = `https://www.figma.com/file/${fileId}/AI-Generated-UI`;
+
+    // 返回Figma文件链接
+    res.json({ 
+      code: 0, 
+      data: { 
+        figmaUrl: figmaUrl 
+      } 
+    });
   } catch (e) {
     res.json({ code: 1, msg: "打开Figma失败：" + e.message });
   }
