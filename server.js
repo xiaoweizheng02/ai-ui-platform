@@ -82,6 +82,31 @@ app.get('/api/admin/users', (req, res) => {
   res.json({ code: 0, data: { "guest": defaultUser } });
 });
 
+// ==============================
+// Figma API 集成
+// ==============================
+app.post('/api/figma/open', async (req, res) => {
+  const { html } = req.body;
+  try {
+    const figmaToken = process.env.FIGMA_ACCESS_TOKEN;
+    if (!figmaToken) {
+      return res.json({ code: 1, msg: "Figma访问令牌未设置" });
+    }
+
+    // 模拟Figma API调用
+    setTimeout(() => {
+      res.json({ 
+        code: 0, 
+        data: { 
+          figmaUrl: "https://www.figma.com/files/recent" 
+        } 
+      });
+    }, 1000);
+  } catch (e) {
+    res.json({ code: 1, msg: "打开Figma失败：" + e.message });
+  }
+});
+
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public/index.html')));
 app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'public/login.html')));
 app.get('/pay', (req, res) => res.sendFile(path.join(__dirname, 'public/pay.html')));

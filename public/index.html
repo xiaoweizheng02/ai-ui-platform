@@ -359,7 +359,38 @@
 
       // 在Figma中打开
       elements.openFigma.addEventListener('click', () => {
-        alert('正在打开Figma...');
+        if (!currentHtml) {
+          alert('请先生成设计');
+          return;
+        }
+        
+        elements.openFigma.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> 打开中...';
+        elements.openFigma.disabled = true;
+        
+        fetch('/api/figma/open', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ html: currentHtml })
+        })
+        .then(res => res.json())
+        .then(data => {
+          elements.openFigma.innerHTML = '在Figma中打开';
+          elements.openFigma.disabled = false;
+          
+          if (data.code === 0) {
+            window.open(data.data.figmaUrl, '_blank');
+          } else {
+            alert(data.msg);
+          }
+        })
+        .catch(err => {
+          console.error('打开Figma失败:', err);
+          elements.openFigma.innerHTML = '在Figma中打开';
+          elements.openFigma.disabled = false;
+          alert('打开Figma失败，请重试');
+        });
       });
     }
 
