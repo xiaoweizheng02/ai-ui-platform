@@ -18,7 +18,7 @@ app.post('/api/generate/ui', async (req, res) => {
   const { prompt } = req.body;
 
   try {
-    const apiKey = process.env.DOUBAO_API_KEY || "这里替换成你的豆包API Key";
+    const apiKey = process.env.DOUBAO_API_KEY || "ep-m-20260327143747-qlhcp";
     const resp = await axios({
       method: "POST",
       url: "https://ark.cn-beijing.aliyuncs.com/api/v1/endpoints/yi-34b-chat-infer/infer",
