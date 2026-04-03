@@ -18,7 +18,7 @@ app.post('/api/generate/ui', async (req, res) => {
   const { prompt } = req.body;
 
   try {
-    const apiKey = process.env.DOUBAO_API_KEY || "953c9670-b77b-4650-8aff-6d0ce472241b"";
+    const apiKey = process.env.DOUBAO_API_KEY || "export ARK_API_KEY="953c9670-b77b-4650-8aff-6d0ce472241b""";
     const resp = await axios({
       method: "POST",
       url: "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
